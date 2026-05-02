@@ -8,7 +8,7 @@ blueprint:
     the command_line notify service and any template sensor that listens for the
     event type selected here.
   domain: automation
-  author: SEEIT.KIWI
+  author: WiFiGuys-NZ
   homeassistant:
     min_version: 2024.6.0
   input:
