@@ -15,7 +15,7 @@ blueprints/
   automation/
     webhook-camera-template.yaml
 packages/
-  webhook-camera-support.yaml
+  webhook_camera_support.yaml
 ```
 
 ## Install the blueprint
@@ -32,18 +32,39 @@ Use this URL:
 https://raw.githubusercontent.com/WiFiGuys-NZ/home-assistant-webhook-camera/main/blueprints/automation/webhook-camera-template.yaml
 ```
 
+Or use this My Home Assistant import link:
+
+```text
+https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FWiFiGuys-NZ%2Fhome-assistant-webhook-camera%2Fmain%2Fblueprints%2Fautomation%2Fwebhook-camera-template.yaml
+```
+
 ## Install the support package
 
 Copy this file into Home Assistant:
 
 ```text
-/config/packages/webhook-camera-support.yaml
+/config/packages/webhook_camera_support.yaml
 ```
 
 The package file is:
 
 ```text
-packages/webhook-camera-support.yaml
+packages/webhook_camera_support.yaml
+```
+
+## Simple install from Terminal/SSH
+
+From the Home Assistant Terminal/SSH add-on, run:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/WiFiGuys-NZ/home-assistant-webhook-camera/main/install.sh | sh
+```
+
+This downloads:
+
+```text
+/config/blueprints/automation/WiFiGuys-NZ/webhook-camera-template.yaml
+/config/packages/webhook_camera_support.yaml
 ```
 
 Make sure packages are enabled in `configuration.yaml`:
