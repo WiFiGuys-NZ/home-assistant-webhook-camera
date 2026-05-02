@@ -1,91 +1,117 @@
-# webhook-camera-template.yaml
-#
-# Home Assistant package template for a camera webhook that receives JSON with a
-# base64 `snapshot`, writes one latest image file, and updates a template sensor.
-#
-# Install:
-# 1. Copy this file to /config/packages/webhook-camera-template.yaml
-# 2. Replace the values marked CHANGE_ME.
-# 3. Keep webhook_id secret; it is the only authentication for this endpoint.
-# 4. Restart Home Assistant after adding the package.
-#
-# Webhook URL:
-# https://YOUR_HOME_ASSISTANT_URL/api/webhook/CHANGE_ME_WEBHOOK_ID
-#
-# Notes:
-# - `local_only: true` is the safer default for LAN/Nabu Casa access.
-# - Set `local_only: false` only when this webhook must be triggered directly
-#   from the internet.
-# - JSON requests must use Content-Type: application/json for `trigger.json`.
+blueprint:
+  name: Webhook Camera Template
+  description: >
+    Receive a camera webhook JSON payload, write the latest base64 snapshot via
+    a command_line notify service, and fire an event for a template sensor.
 
-command_line:
-  - notify:
-      name: webhook_camera_snapshot_writer
-      command: "sh -c 'mkdir -p /config/www/tmp && base64 -d > /config/www/tmp/webhook_camera_latest.jpg'"
+    This blueprint creates the automation only. A support package must define
+    the command_line notify service and any template sensor that listens for the
+    event type selected here.
+  domain: automation
+  author: SEEIT.KIWI
+  homeassistant:
+    min_version: 2024.6.0
+  input:
+    camera:
+      name: Camera
+      icon: mdi:cctv
+      input:
+        camera_name:
+          name: Camera name
+          description: Friendly name used in the event data.
+          default: Webhook Camera
+          selector:
+            text:
+        webhook_id:
+          name: Webhook ID
+          description: Secret webhook ID. The URL is /api/webhook/YOUR_WEBHOOK_ID.
+          selector:
+            text:
+        local_only:
+          name: Local only
+          description: Keep enabled for LAN or Home Assistant Cloud. Disable only for direct internet webhook access.
+          default: true
+          selector:
+            boolean:
+    snapshot:
+      name: Snapshot
+      icon: mdi:image
+      input:
+        snapshot_writer_service:
+          name: Snapshot writer notify service
+          description: Notify service that accepts base64 on stdin and writes the latest image file.
+          default: notify.webhook_camera_snapshot_writer
+          selector:
+            text:
+        snapshot_path:
+          name: Snapshot file path
+          description: Full Home Assistant container path where the latest image is written.
+          default: /config/www/tmp/webhook_camera_latest.jpg
+          selector:
+            text:
+        snapshot_url:
+          name: Dashboard image URL
+          description: URL for Lovelace/dashboard cards to display the latest image.
+          default: /local/tmp/webhook_camera_latest.jpg
+          selector:
+            text:
+    event:
+      name: Event
+      icon: mdi:calendar-star
+      input:
+        event_type:
+          name: Home Assistant event type
+          description: Template sensors can listen for this event type.
+          default: webhook_camera_event
+          selector:
+            text:
 
-template:
-  - triggers:
-      - trigger: event
-        event_type: webhook_camera_event
-    sensor:
-      - name: Webhook Camera
-        unique_id: webhook_camera
-        default_entity_id: sensor.webhook_camera
-        icon: mdi:cctv
-        picture: "{{ trigger.event.data.snapshot_url | default('/local/tmp/webhook_camera_latest.jpg', true) }}"
-        state: "{{ trigger.event.data.event | default('unknown', true) }}"
-        attributes:
-          device: "{{ trigger.event.data.device | default('', true) }}"
-          time: "{{ trigger.event.data.time | default('', true) }}"
-          resolution_w: "{{ trigger.event.data.resolution_w | int(0) }}"
-          resolution_h: "{{ trigger.event.data.resolution_h | int(0) }}"
-          detection_region: "{{ trigger.event.data.detection_region | int(0) }}"
-          coordinate_x1: "{{ trigger.event.data.coordinate_x1 | int(0) }}"
-          coordinate_y1: "{{ trigger.event.data.coordinate_y1 | int(0) }}"
-          coordinate_x2: "{{ trigger.event.data.coordinate_x2 | int(0) }}"
-          coordinate_y2: "{{ trigger.event.data.coordinate_y2 | int(0) }}"
-          snapshot_path: "{{ trigger.event.data.snapshot_path | default('/config/www/tmp/webhook_camera_latest.jpg', true) }}"
-          snapshot_url: "{{ trigger.event.data.snapshot_url | default('/local/tmp/webhook_camera_latest.jpg', true) }}"
-          snapshot_bytes_base64: "{{ trigger.event.data.snapshot_bytes_base64 | int(0) }}"
-          received_at: "{{ trigger.event.data.received_at | default(now().isoformat(), true) }}"
+trigger_variables:
+  webhook_id_input: !input webhook_id
 
-automation:
-  - id: webhook_camera_webhook
-    alias: Webhook Camera
-    description: Receive a camera webhook, store the latest snapshot, and update a sensor.
-    triggers:
-      - trigger: webhook
-        webhook_id: CHANGE_ME_WEBHOOK_ID
-        allowed_methods:
-          - POST
-        local_only: false
-    conditions: []
-    actions:
-      - variables:
-          payload: "{{ trigger.json | default({}, true) }}"
-          snapshot_base64: "{{ payload.snapshot | default('', true) }}"
-      - choose:
-          - conditions:
-              - condition: template
-                value_template: "{{ snapshot_base64 | length > 0 }}"
-            sequence:
-              - action: notify.webhook_camera_snapshot_writer
-                data:
-                  message: "{{ snapshot_base64 }}"
-      - event: webhook_camera_event
-        event_data:
-          event: "{{ payload.event | default('', true) }}"
-          device: "{{ payload.device | default('', true) }}"
-          time: "{{ payload.time | default('', true) }}"
-          resolution_w: "{{ payload.resolution_w | default(0, true) }}"
-          resolution_h: "{{ payload.resolution_h | default(0, true) }}"
-          detection_region: "{{ payload.detection_region | default(0, true) }}"
-          coordinate_x1: "{{ payload.coordinate_x1 | default(0, true) }}"
-          coordinate_y1: "{{ payload.coordinate_y1 | default(0, true) }}"
-          coordinate_x2: "{{ payload.coordinate_x2 | default(0, true) }}"
-          coordinate_y2: "{{ payload.coordinate_y2 | default(0, true) }}"
-          snapshot_path: /config/www/tmp/webhook_camera_latest.jpg
-          snapshot_url: /local/tmp/webhook_camera_latest.jpg
-          snapshot_bytes_base64: "{{ snapshot_base64 | length }}"
-          received_at: "{{ now().isoformat() }}"
-    mode: single
+triggers:
+  - trigger: webhook
+    webhook_id: "{{ webhook_id_input }}"
+    allowed_methods:
+      - POST
+    local_only: !input local_only
+
+conditions: []
+
+variables:
+  camera_name_input: !input camera_name
+  snapshot_writer_service_input: !input snapshot_writer_service
+  snapshot_path_input: !input snapshot_path
+  snapshot_url_input: !input snapshot_url
+  event_type_input: !input event_type
+  payload: "{{ trigger.json | default({}, true) }}"
+  snapshot_base64: "{{ payload.snapshot | default('', true) }}"
+
+actions:
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ snapshot_base64 | length > 0 }}"
+        sequence:
+          - action: "{{ snapshot_writer_service_input }}"
+            data:
+              message: "{{ snapshot_base64 }}"
+  - event: "{{ event_type_input }}"
+    event_data:
+      camera_name: "{{ camera_name_input }}"
+      event: "{{ payload.event | default('', true) }}"
+      device: "{{ payload.device | default('', true) }}"
+      time: "{{ payload.time | default('', true) }}"
+      resolution_w: "{{ payload.resolution_w | default(0, true) }}"
+      resolution_h: "{{ payload.resolution_h | default(0, true) }}"
+      detection_region: "{{ payload.detection_region | default(0, true) }}"
+      coordinate_x1: "{{ payload.coordinate_x1 | default(0, true) }}"
+      coordinate_y1: "{{ payload.coordinate_y1 | default(0, true) }}"
+      coordinate_x2: "{{ payload.coordinate_x2 | default(0, true) }}"
+      coordinate_y2: "{{ payload.coordinate_y2 | default(0, true) }}"
+      snapshot_path: "{{ snapshot_path_input }}"
+      snapshot_url: "{{ snapshot_url_input }}"
+      snapshot_bytes_base64: "{{ snapshot_base64 | length }}"
+      received_at: "{{ now().isoformat() }}"
+
+mode: single
