@@ -1,0 +1,42 @@
+# webhook-camera-support.yaml
+#
+# Support package for the Webhook Camera Template automation blueprint.
+# Copy this file to /config/packages/webhook-camera-support.yaml.
+#
+# This package provides:
+# - a command_line notify service that writes the latest base64 snapshot to disk
+# - a template sensor that updates when the blueprint fires webhook_camera_event
+#
+# Restart Home Assistant after installing or changing this file.
+
+command_line:
+  - notify:
+      name: webhook_camera_snapshot_writer
+      command: "sh -c 'mkdir -p /config/www/tmp && base64 -d > /config/www/tmp/webhook_camera_latest.jpg'"
+
+template:
+  - triggers:
+      - trigger: event
+        event_type: webhook_camera_event
+    sensor:
+      - name: Webhook Camera
+        unique_id: webhook_camera
+        default_entity_id: sensor.webhook_camera
+        icon: mdi:cctv
+        picture: "{{ trigger.event.data.snapshot_url | default('/local/tmp/webhook_camera_latest.jpg', true) }}"
+        state: "{{ trigger.event.data.event | default('unknown', true) }}"
+        attributes:
+          camera_name: "{{ trigger.event.data.camera_name | default('', true) }}"
+          device: "{{ trigger.event.data.device | default('', true) }}"
+          time: "{{ trigger.event.data.time | default('', true) }}"
+          resolution_w: "{{ trigger.event.data.resolution_w | int(0) }}"
+          resolution_h: "{{ trigger.event.data.resolution_h | int(0) }}"
+          detection_region: "{{ trigger.event.data.detection_region | int(0) }}"
+          coordinate_x1: "{{ trigger.event.data.coordinate_x1 | int(0) }}"
+          coordinate_y1: "{{ trigger.event.data.coordinate_y1 | int(0) }}"
+          coordinate_x2: "{{ trigger.event.data.coordinate_x2 | int(0) }}"
+          coordinate_y2: "{{ trigger.event.data.coordinate_y2 | int(0) }}"
+          snapshot_path: "{{ trigger.event.data.snapshot_path | default('/config/www/tmp/webhook_camera_latest.jpg', true) }}"
+          snapshot_url: "{{ trigger.event.data.snapshot_url | default('/local/tmp/webhook_camera_latest.jpg', true) }}"
+          snapshot_bytes_base64: "{{ trigger.event.data.snapshot_bytes_base64 | int(0) }}"
+          received_at: "{{ trigger.event.data.received_at | default(now().isoformat(), true) }}"
