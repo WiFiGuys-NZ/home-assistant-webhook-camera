@@ -1,11 +1,11 @@
-# Home Assistant Webhook Camera
+# Home Assistant Webhook Snapshot
 
 Receive a camera webhook JSON payload in Home Assistant, store the latest base64
 snapshot as a local image, and update a template sensor for dashboards.
 
 This project includes:
 
-- A HACS-ready custom integration called **Webhook Receive Snapshot**.
+- A HACS-ready custom integration called **Home Assistant Webhook Snapshot**.
 - An automation blueprint for the per-camera webhook setup.
 - A support package that provides the image writer and template sensor.
 
@@ -31,7 +31,7 @@ custom_components/webhook_receive_snapshot
 
 It provides:
 
-- A UI config flow named **Webhook Receive Snapshot**
+- A UI config flow named **Home Assistant Webhook Snapshot**
 - Multiple cameras, added as separate config entries with the + button
 - A camera entity showing the latest received snapshot
 - Sensor entities for event, device, time, region, coordinates, resolution,
@@ -56,6 +56,32 @@ https://YOUR_HOME_ASSISTANT_URL/api/webhook/YOUR_WEBHOOK_ID
 
 This repository includes `hacs.json` and the Home Assistant custom component
 layout expected by HACS.
+
+## Install with HACS
+
+In Home Assistant, go to:
+
+```text
+HACS > Integrations > three-dot menu > Custom repositories
+```
+
+Add:
+
+```text
+Repository: https://github.com/WiFiGuys-NZ/home-assistant-webhook-camera
+Category: Integration
+```
+
+Then install **Home Assistant Webhook Snapshot** from HACS and restart Home
+Assistant.
+
+After restart, go to:
+
+```text
+Settings > Devices & services > Add integration > Home Assistant Webhook Snapshot
+```
+
+Create one entry per camera. Use the + button to add more cameras later.
 
 ## Install the blueprint
 
