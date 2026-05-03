@@ -1,0 +1,13 @@
+{
+  "domain": "webhook_receive_snapshot",
+  "name": "Webhook Receive Snapshot",
+  "after_dependencies": ["webhook"],
+  "codeowners": ["@WiFiGuys-NZ"],
+  "config_flow": true,
+  "documentation": "https://github.com/WiFiGuys-NZ/home-assistant-webhook-camera",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/WiFiGuys-NZ/home-assistant-webhook-camera/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
