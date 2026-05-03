@@ -5,12 +5,15 @@ snapshot as a local image, and update a template sensor for dashboards.
 
 This project includes:
 
+- A HACS-ready custom integration called **Webhook Receive Snapshot**.
 - An automation blueprint for the per-camera webhook setup.
 - A support package that provides the image writer and template sensor.
 
 ## Repository files
 
 ```text
+custom_components/
+  webhook_receive_snapshot/
 blueprints/
   automation/
     webhook-camera-template.yaml
@@ -18,7 +21,45 @@ packages/
   webhook_camera_support.yaml
 ```
 
+## Custom integration
+
+The recommended install path is the custom integration:
+
+```text
+custom_components/webhook_receive_snapshot
+```
+
+It provides:
+
+- A UI config flow named **Webhook Receive Snapshot**
+- Multiple cameras, added as separate config entries with the + button
+- A camera entity showing the latest received snapshot
+- Sensor entities for event, device, time, region, coordinates, resolution,
+  snapshot bytes, snapshot URL, and received time
+- Per-camera image files written to:
+
+```text
+/config/www/temp/images/webhook_receive_snapshot/<camera_slug>_last_motion.jpg
+```
+
+Dashboard URL:
+
+```text
+/local/temp/images/webhook_receive_snapshot/<camera_slug>_last_motion.jpg
+```
+
+Webhook URL:
+
+```text
+https://YOUR_HOME_ASSISTANT_URL/api/webhook/YOUR_WEBHOOK_ID
+```
+
+This repository includes `hacs.json` and the Home Assistant custom component
+layout expected by HACS.
+
 ## Install the blueprint
+
+The blueprint/package method is still available as a simple YAML-based install.
 
 In Home Assistant, go to:
 
