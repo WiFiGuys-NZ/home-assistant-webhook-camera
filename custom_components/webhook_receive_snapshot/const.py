@@ -1,4 +1,4 @@
-"""Constants for Webhook Receive Snapshot."""
+"""Constants for Home Assistant Webhook Snapshot."""
 
 from __future__ import annotations
 
