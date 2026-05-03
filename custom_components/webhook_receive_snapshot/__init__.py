@@ -1,4 +1,4 @@
-"""Webhook Receive Snapshot integration."""
+"""Home Assistant Webhook Snapshot integration."""
 
 from __future__ import annotations
 
@@ -48,13 +48,14 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+
 WebhookSnapshotConfigEntry = ConfigEntry
 
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: WebhookSnapshotConfigEntry
 ) -> bool:
-    """Set up Webhook Receive Snapshot from a config entry."""
+    """Set up Home Assistant Webhook Snapshot from a config entry."""
     manager = WebhookSnapshotManager(hass, entry)
     entry.runtime_data = manager
 
@@ -131,7 +132,7 @@ class WebhookSnapshotManager:
         return DeviceInfo(
             identifiers={(DOMAIN, self.entry.entry_id)},
             name=self.camera_name,
-            manufacturer="Webhook Receive Snapshot",
+            manufacturer="Home Assistant Webhook Snapshot",
             model="Webhook snapshot receiver",
         )
 
