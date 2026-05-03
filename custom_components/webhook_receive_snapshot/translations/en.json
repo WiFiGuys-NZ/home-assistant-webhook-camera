@@ -1,5 +1,5 @@
 {
-  "title": "Webhook Receive Snapshot",
+  "title": "Home Assistant Webhook Snapshot",
   "config": {
     "step": {
       "user": {
