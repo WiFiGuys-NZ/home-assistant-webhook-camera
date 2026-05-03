@@ -1,6 +1,6 @@
 {
   "domain": "webhook_receive_snapshot",
-  "name": "Webhook Receive Snapshot",
+  "name": "Home Assistant Webhook Snapshot",
   "after_dependencies": ["webhook"],
   "codeowners": ["@WiFiGuys-NZ"],
   "config_flow": true,
