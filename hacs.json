@@ -1,0 +1,6 @@
+{
+  "name": "Webhook Receive Snapshot",
+  "render_readme": true,
+  "domains": ["camera", "sensor"],
+  "homeassistant": "2024.6.0"
+}
