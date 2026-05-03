@@ -112,6 +112,8 @@ class WebhookSnapshotManager:
             filename = configured_stem or f"{self.camera_slug}_last_motion"
             if configured_suffix in (".jpg", ".jpeg"):
                 filename = f"{filename}{configured_suffix}"
+            else:
+                filename = f"{filename}.jpg"
         else:
             filename = f"{self.camera_slug}_last_motion.jpg"
         return filename
