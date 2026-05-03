@@ -1,0 +1,29 @@
+{
+  "title": "Webhook Receive Snapshot",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add webhook snapshot camera",
+        "description": "Create a webhook receiver for one camera. Add another entry later with the + button for each additional camera.",
+        "data": {
+          "camera_name": "Camera name",
+          "webhook_id": "Webhook ID",
+          "local_only": "Local only",
+          "image_filename": "Image filename"
+        },
+        "data_description": {
+          "camera_name": "Friendly name for this camera.",
+          "webhook_id": "Secret webhook ID. The URL is /api/webhook/YOUR_WEBHOOK_ID.",
+          "local_only": "Keep enabled for LAN or Home Assistant Cloud. Disable only for direct internet webhook access.",
+          "image_filename": "Optional filename. Leave blank to use <camera_slug>_last_motion.jpg."
+        }
+      }
+    },
+    "error": {
+      "required": "This field is required."
+    },
+    "abort": {
+      "already_configured": "This webhook ID is already configured."
+    }
+  }
+}
