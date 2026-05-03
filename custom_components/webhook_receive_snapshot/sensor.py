@@ -1,4 +1,4 @@
-"""Sensor platform for Webhook Receive Snapshot."""
+"""Sensor platform for Home Assistant Webhook Snapshot."""
 
 from __future__ import annotations
 
